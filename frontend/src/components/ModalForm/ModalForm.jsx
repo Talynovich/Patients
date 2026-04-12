@@ -18,7 +18,7 @@ const ModalForm = ({ isOpen, onClose, initialDate }) => {
     defaultValues: {
       name: '',
       dob: '',
-      gender: 'Мужской',
+      gender: 'male',
       phone: '+996',
       diagnosis: '',
       medicalHistory: '',
@@ -35,7 +35,7 @@ const ModalForm = ({ isOpen, onClose, initialDate }) => {
       reset({
         name: initialDate.name || '',
         dob: initialDate.dob.slice(0, 10) || '',
-        gender: initialDate.gender || 'Мужской',
+        gender: initialDate.gender || 'male',
         phone: initialDate.phone || '+996',
         diagnosis: initialDate.diagnosis || '',
         medicalHistory: initialDate.medicalHistory || '',
@@ -44,7 +44,7 @@ const ModalForm = ({ isOpen, onClose, initialDate }) => {
       reset({
         name: '',
         dob: '',
-        gender: 'Мужской',
+        gender: 'male',
         phone: '+996',
         diagnosis: '',
         medicalHistory: '',
@@ -58,8 +58,6 @@ const ModalForm = ({ isOpen, onClose, initialDate }) => {
         ...formData,
         id: initialDate?.id,
       }
-
-      console.log('Перед сохранением:', payload)
 
       await savePatient(payload).unwrap()
       reset()
@@ -150,8 +148,8 @@ const ModalForm = ({ isOpen, onClose, initialDate }) => {
                  focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white"
               {...register('gender')}
             >
-              <option value="Мужской">Мужской</option>
-              <option value="Женский">Женский</option>
+              <option value="male">Мужской</option>
+              <option value="female">Женский</option>
             </select>
           </div>
 

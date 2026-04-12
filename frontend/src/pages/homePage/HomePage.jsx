@@ -19,12 +19,14 @@ const PatientManagement = () => {
 
   const dispatch = useDispatch()
 
+
   const { data = [], isLoading } = useGetPatientsQuery()
+  console.log(data)
   const [deletePatient] = useDeletePatientMutation()
   const [savePatient] = useSavePatientMutation()
 
   const filteredPatients = data.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase())
+    p?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   )
   const handleEditingClick = (patient) => {
     savePatient(patient)
@@ -65,7 +67,7 @@ const PatientManagement = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           <Table
             columns={columns}
-            dataSource={filteredPatients}
+            dataSource={data}
             loading={isLoading}
             rowKey="id"
             scroll={{ x: 'max-content' }}

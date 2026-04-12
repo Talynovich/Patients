@@ -7,4 +7,4 @@ export const updatePatientSchema = Joi.object({
   phone: Joi.string().pattern(/^\+?[0-9]{10,15}$/),
   diagnosis: Joi.string().max(500),
   medicalHistory: Joi.string().allow(''),
-}).min(1)
+}).min(1).unknown(true)

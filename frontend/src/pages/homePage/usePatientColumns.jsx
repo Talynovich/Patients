@@ -44,7 +44,7 @@ export const usePatientColumns = ({ onDelete, onEdit, holder }) => {
             <Popconfirm
               title="Удалить пациента"
               description="Вы уверены, что хотите удалить пациента?"
-              onConfirm={() => onDelete(record.id)}
+              onConfirm={() => onDelete(record._id)}
               okText="Да"
               cancelText="Нет"
             >

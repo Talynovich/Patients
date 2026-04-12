@@ -10,7 +10,6 @@ import LoginPageForm from './LoginPageForm.jsx'
 const { Title, Text } = Typography
 
 const LoginPage = () => {
-  const dispatch = useDispatch()
   const navigate = useNavigate()
   const { isAuthenticated } = useSelector((state) => state.auth)
   const { isLoading } = useGetUserQuery()

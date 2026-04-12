@@ -11,7 +11,7 @@ const baseQuery = fetchBaseQuery({
       try {
         headers.set('authorization', `Bearer ${token}`)
       } catch (e) {
-        console.log(`Критическая ошибка в токене авторизации: ${e}`)
+        console.log(`Critical error in authorization token: ${e}`)
       }
     }
     return headers
