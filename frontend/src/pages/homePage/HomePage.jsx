@@ -21,7 +21,6 @@ const PatientManagement = () => {
 
 
   const { data = [], isLoading } = useGetPatientsQuery()
-  console.log(data)
   const [deletePatient] = useDeletePatientMutation()
   const [savePatient] = useSavePatientMutation()
 
@@ -29,9 +28,9 @@ const PatientManagement = () => {
     p?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   )
   const handleEditingClick = (patient) => {
-    savePatient(patient)
     setIsModalOpen(true)
     setEditingPatient(patient)
+    savePatient(patient)
   }
 
   const handleCloseModal = () => {

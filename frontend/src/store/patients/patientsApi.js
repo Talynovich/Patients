@@ -26,8 +26,16 @@ export const patientsApi = createApi({
     }),
     savePatient: build.mutation({
       query: (data) => ({
-        url: data._id ? `/patients/${data._id}` : '/patients',
-        method: data._id ? 'PATCH' : 'POST',
+        url: `/patients/${data._id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['Patients'],
+    }),
+    createPatient: build.mutation({
+      query: (data) => ({
+        url: '/patients',
+        method: 'POST',
         body: data,
       }),
       invalidatesTags: ['Patients'],
@@ -39,4 +47,5 @@ export const {
   useGetPatientsQuery,
   useDeletePatientMutation,
   useSavePatientMutation,
+  useCreatePatientMutation,
 } = patientsApi
