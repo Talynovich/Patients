@@ -53,7 +53,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const authApi = createApi({
   reducerPath: 'authApi',
-  // ВАЖНО: подключаем именно кастомный baseQueryWithReauth
   baseQuery: baseQueryWithReauth,
   endpoints: (build) => ({
     login: build.mutation({

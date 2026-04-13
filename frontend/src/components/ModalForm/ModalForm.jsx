@@ -2,11 +2,12 @@ import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { yupResolver } from '@hookform/resolvers/yup'
-import {useCreatePatientMutation} from '../../store/patients/patientsApi.js'
+import {useCreatePatientMutation, useUpdatePatientMutation} from '../../store/patients/patientsApi.js'
 import {schemaPatients} from '../../shared/lib/validation/patient.schema.js'
 
 const ModalForm = ({ isOpen, onClose, initialDate }) => {
   const [createPatient] = useCreatePatientMutation()
+  const [updatePatient] = useUpdatePatientMutation()
   const {
     register,
     handleSubmit,
@@ -52,14 +53,17 @@ const ModalForm = ({ isOpen, onClose, initialDate }) => {
   }, [initialDate, reset])
 
   const onSubmit = async (formData) => {
-    console.log(formData, 'formData111')
     try {
       const payload = {
         ...formData,
         _id: initialDate?._id,
       }
 
-      await createPatient(payload).unwrap()
+      if (payload._id) {
+        await updatePatient(payload).unwrap();
+      } else {
+        await createPatient(payload).unwrap();
+      }
       reset()
       onClose()
     } catch (error) {

@@ -9,6 +9,7 @@ const authSlice = createSlice({
   },
   reducers: {
     setCredentials: (state, action) => {
+      state.user = action.payload.user
       state.accessToken = action.payload.accessToken
       state.refreshToken = action.payload.refreshToken
       state.isAuthenticated = true
@@ -16,6 +17,7 @@ const authSlice = createSlice({
       localStorage.setItem('refreshToken', action.payload.refreshToken)
     },
     logout: (state) => {
+      state.user = null
       state.accessToken = null
       state.refreshToken = null
       state.isAuthenticated = false

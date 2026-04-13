@@ -24,7 +24,7 @@ export const patientsApi = createApi({
       query: (id) => ({ url: `/patients/${id}`, method: 'DELETE' }),
       invalidatesTags: ['Patients'],
     }),
-    savePatient: build.mutation({
+    updatePatient: build.mutation({
       query: (data) => ({
         url: `/patients/${data._id}`,
         method: 'PATCH',
@@ -46,6 +46,6 @@ export const patientsApi = createApi({
 export const {
   useGetPatientsQuery,
   useDeletePatientMutation,
-  useSavePatientMutation,
+  useUpdatePatientMutation,
   useCreatePatientMutation,
 } = patientsApi

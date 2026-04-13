@@ -1,80 +1,70 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import React from 'react'
+import { useNavigate } from 'react-router'
 
-import { Table, message } from 'antd'
-
-import PatientsToolbar from '../../components/PatientsToolbar/PatientsToolbar'
 import {
-  useDeletePatientMutation,
-  useGetPatientsQuery,
-  useSavePatientMutation,
-} from '../../store/patients/patientsApi'
-import { setCurrentPatient } from '../../store/patients/patientsSlice'
-import { usePatientColumns } from './usePatientColumns'
+  ArrowRightOutlined,
+  CalendarOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
+import { Card, Col, Row, Typography } from 'antd'
 
-const PatientManagement = () => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingPatient, setEditingPatient] = useState(null)
+const { Title, Text } = Typography
 
-  const dispatch = useDispatch()
+const HomePage = () => {
+  const navigate = useNavigate()
 
-
-  const { data = [], isLoading } = useGetPatientsQuery()
-  const [deletePatient] = useDeletePatientMutation()
-  const [savePatient] = useSavePatientMutation()
-
-  const filteredPatients = data.filter((p) =>
-    p?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-  const handleEditingClick = (patient) => {
-    setIsModalOpen(true)
-    setEditingPatient(patient)
-    savePatient(patient)
-  }
-
-  const handleCloseModal = () => {
-    setEditingPatient(null)
-    setIsModalOpen(false)
-    dispatch(setCurrentPatient(null))
-  }
-
-  const [_, holder] = message.useMessage()
-
-  const onDelete = (id) => {
-    deletePatient(id)
-  }
-
-  const columns = usePatientColumns({
-    onDelete,
-    onEdit: handleEditingClick,
-    holder,
-  })
+  const menuItems = [
+    {
+      title: 'Реестр пациентов',
+      description:
+        'Управление базой данных пациентов, просмотр и редактирование карт.',
+      icon: <UserOutlined className="text-3xl text-blue-500" />,
+      path: '/patients',
+      color: 'hover:border-blue-400',
+    },
+    {
+      title: 'Запись на прием',
+      description: 'Создание новых записей, управление графиком и врачами.',
+      icon: <CalendarOutlined className="text-3xl text-green-500" />,
+      path: '/appointments',
+      color: 'hover:border-green-400',
+    },
+  ]
 
   return (
-    <div className="bg-slate-50 p-4 md:p-8 font-sans">
-      <div className="max-w-6xl mx-auto">
-        <PatientsToolbar
-          filteredPatients={filteredPatients}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-          initialDate={editingPatient}
-          handleCloseModal={handleCloseModal}
-        />
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <Table
-            columns={columns}
-            dataSource={data}
-            loading={isLoading}
-            rowKey="id"
-            scroll={{ x: 'max-content' }}
-          />
-        </div>
-      </div>
+    <div className="p-8 max-w-6xl mx-auto">
+      <header className="mb-10 text-center">
+        <Title level={2}>Панель управления</Title>
+      </header>
+
+      <Row gutter={[24, 24]}>
+        {menuItems.map((item, index) => (
+          <Col xs={24} md={12} key={index}>
+            <Card
+              hoverable
+              className={`h-full transition-all duration-300 border-2 border-transparent ${item.color}`}
+              onClick={() => navigate(item.path)}
+            >
+              <div className="flex items-start space-x-4">
+                <div className="p-3 bg-gray-50 rounded-lg">{item.icon}</div>
+                <div className="flex-1">
+                  <Title level={4} style={{ marginTop: 0 }}>
+                    {item.title}
+                  </Title>
+                  <Text type="secondary" className="block mb-4">
+                    {item.description}
+                  </Text>
+                  <div className="flex items-center text-blue-500 font-medium">
+                    Перейти <ArrowRightOutlined className="ml-2 text-xs" />
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </Col>
+        ))}
+      </Row>
     </div>
   )
 }
 
-export default PatientManagement
+export default HomePage
