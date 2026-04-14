@@ -8,15 +8,16 @@ import { useGetPatientsQuery } from '../../store/patients/patientsApi'
 
 const PatientDetailsPage = () => {
   const { data = [], isLoading } = useGetPatientsQuery()
-
+  const patients = data?.data || [];
   const { id } = useParams()
-  const patientId = data.find((patient) => patient.id === id)
+
+  const patientId = patients.find((patient) => patient._id === id)
 
   return patientId ? (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-700">
       <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors mb-6">
         <Link
-          to="/"
+          to="/patients"
           className="flex items-center text-blue-600 hover:text-blue-800 transition-colors mb-6"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />

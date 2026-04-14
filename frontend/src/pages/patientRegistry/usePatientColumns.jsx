@@ -12,7 +12,7 @@ export const usePatientColumns = ({ onDelete, onEdit, holder }) => {
       dataIndex: 'name',
       key: 'name',
       render: (text, record) => (
-        <a onClick={() => navigate(`/${record.id}`)}>{text}</a>
+        <a onClick={() => navigate(`${record._id}`)}>{text}</a>
       ),
     },
     {

@@ -24,7 +24,7 @@ const HomePage = () => {
     },
     {
       title: 'Запись на прием',
-      description: 'Создание новых записей, управление графиком и врачами.',
+      description: 'Создание новых записей',
       icon: <CalendarOutlined className="text-3xl text-green-500" />,
       path: '/appointments',
       color: 'hover:border-green-400',
