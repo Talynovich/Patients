@@ -2,8 +2,13 @@ import * as patientsService from '../services/patients.service.js'
 
 export const getAllPatients = async (req, res) => {
   const user = req.user
-  const patients = await patientsService.getAllPatients(user)
-  res.json(patients)
+  const { name, page, limit } = req.query
+  const result = await patientsService.getAllPatients(user, {
+    name,
+    page: +page,
+    limit: +limit
+  })
+  res.json(result)
 }
 
 export const getPatientById = async (req, res) => {

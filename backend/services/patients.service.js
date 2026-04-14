@@ -1,12 +1,25 @@
 import { ROLES } from '../constants/common.js'
 import { Patients } from '../models/patientsModel.js'
 
-export const getAllPatients = async (user) => {
-  const { role, id } = user
-  if (role === ROLES.ADMIN) {
-    return Patients.find()
+export const getAllPatients = async (
+  user,
+  { name, page = 1, limit = 20 } = {}
+) => {
+  console.log(user.role, '11111')
+  const filter = user.role === ROLES.ADMIN ? {} : { user: user.id }
+
+  if (name) {
+    filter.name = { $regex: name, $options: 'i' }
   }
-  return await Patients.find({ user: id })
+
+  const skip = (page - 1) * limit
+  const data = await Patients.find(filter).skip(skip).limit(Number(limit))
+
+  const total = await Patients.countDocuments(filter)
+  return {
+    data,
+    total,
+  }
 }
 
 export const getPatientById = async (id) => {
@@ -19,7 +32,7 @@ export const createPatient = async (patient) => {
 }
 
 export const updatePatient = async (id, updates) => {
-  return await Patients.findByIdAndUpdate(id, updates, {
+  return Patients.findByIdAndUpdate(id, updates, {
     new: true,
     runValidators: true,
   })

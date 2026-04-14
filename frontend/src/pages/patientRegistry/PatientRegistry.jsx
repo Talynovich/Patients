@@ -18,11 +18,10 @@ const PatientManagement = () => {
 
   const dispatch = useDispatch()
 
-
   const { data = [], isLoading } = useGetPatientsQuery()
   const [deletePatient] = useDeletePatientMutation()
 
-  const filteredPatients = data.filter((p) =>
+  const filteredPatients = (data?.data || []).filter((p) =>
     p?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   )
   const handleEditingClick = (patient) => {
@@ -47,7 +46,6 @@ const PatientManagement = () => {
     onEdit: handleEditingClick,
     holder,
   })
-
   return (
     <div className="bg-slate-50 p-4 md:p-8 font-sans">
       <div className="max-w-6xl mx-auto">
@@ -63,7 +61,7 @@ const PatientManagement = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           <Table
             columns={columns}
-            dataSource={data}
+            dataSource={filteredPatients}
             loading={isLoading}
             rowKey="_id"
             scroll={{ x: 'max-content' }}
