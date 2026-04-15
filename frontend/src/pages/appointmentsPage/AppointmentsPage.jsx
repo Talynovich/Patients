@@ -22,7 +22,6 @@ const AppointmentsPage = () => {
   const { data = [], isLoading } = useGetAppointmentsQuery()
   const [form] = Form.useForm()
 
-
   const columns = [
     {
       title: 'Пациент',
@@ -147,6 +146,8 @@ const AppointmentsPage = () => {
             dataSource={data}
             pagination={{ pageSize: 10 }}
             className="custom-table"
+            scroll={{ x: 'max-content' }}
+            rowKey={data.doctor}
           />
         </div>
       </div>

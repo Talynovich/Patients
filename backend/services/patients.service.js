@@ -5,7 +5,6 @@ export const getAllPatients = async (
   user,
   { name, page = 1, limit = 20 } = {}
 ) => {
-  console.log(user.role, '11111')
   const filter = user.role === ROLES.ADMIN ? {} : { user: user.id }
 
   if (name) {

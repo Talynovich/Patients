@@ -2,8 +2,12 @@ import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { yupResolver } from '@hookform/resolvers/yup'
-import {useCreatePatientMutation, useUpdatePatientMutation} from '../../store/patients/patientsApi.js'
-import {schemaPatients} from '../../shared/lib/validation/patient.schema.js'
+
+import { schemaPatients } from '../../shared/lib/validation/patient.schema.js'
+import {
+  useCreatePatientMutation,
+  useUpdatePatientMutation,
+} from '../../store/patients/patientsApi.js'
 
 const ModalForm = ({ isOpen, onClose, initialDate }) => {
   const [createPatient] = useCreatePatientMutation()
@@ -60,9 +64,9 @@ const ModalForm = ({ isOpen, onClose, initialDate }) => {
       }
 
       if (payload._id) {
-        await updatePatient(payload).unwrap();
+        await updatePatient(payload).unwrap()
       } else {
-        await createPatient(payload).unwrap();
+        await createPatient(payload).unwrap()
       }
       reset()
       onClose()
@@ -74,8 +78,8 @@ const ModalForm = ({ isOpen, onClose, initialDate }) => {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+    <div className="fixed max-h-full  inset-0 z-50 flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-y-auto">
         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
           <h2 className="text-xl font-semibold text-slate-800">
             Новый пациент
@@ -191,7 +195,7 @@ const ModalForm = ({ isOpen, onClose, initialDate }) => {
               Отмена
             </button>
             <button
-              type='submit'
+              type="submit"
               className="flex-1 px-4 py-2 border border-slate-300 text-slate-600
                  rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
             >
