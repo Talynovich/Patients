@@ -9,26 +9,52 @@ import {
   Select,
   Space,
   Table,
-  Tag,
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
 
-import { useGetAppointmentsQuery } from '../../store/appointments/appointmentsApi.js'
+import {
+  useCreateAppointmentMutation,
+  useGetAppointmentsQuery,
+} from '../../store/appointments/appointmentsApi.js'
+import { useGetPatientsQuery } from '../../store/patients/patientsApi.js'
 
 const { Title } = Typography
 
 const AppointmentsPage = () => {
-  const { data = [], isLoading } = useGetAppointmentsQuery()
+  const { data: appointmentsData = [], isLoading } = useGetAppointmentsQuery()
+  const [createAppointment] = useCreateAppointmentMutation()
+
+  const {
+    data: patientsData = { data: [], total: 0 },
+    isLoading: isPatientsLoading,
+  } = useGetPatientsQuery()
   const [form] = Form.useForm()
+
+  const onFinish = async (values) => {
+    const payload = {
+      appointmentDate: values.date.toISOString(),
+      reason: values.reason,
+      patient: values.patient,
+    }
+    try {
+      await createAppointment(payload)
+      form.resetFields()
+    } catch (error) {
+      console.log(`Error: ${error}`)
+    }
+  }
+  const onDelete = async (data) => {
+    await deleteAppointment(data)
+  }
 
   const columns = [
     {
       title: 'Пациент',
       dataIndex: 'patient',
       key: 'patient',
-      render: (text) => (
-        <span className="text-blue-600 font-medium">{text}</span>
+      render: (patient) => (
+        <span className="text-blue-600 font-medium">{patient.name}</span>
       ),
     },
     {
@@ -52,23 +78,13 @@ const AppointmentsPage = () => {
           <Button type="link" size="small">
             Редактировать
           </Button>
-          <Button type="link" danger size="small">
+          <Button type="link" danger size="small" onClick={onDelete}>
             Отменить
           </Button>
         </Space>
       ),
     },
   ]
-
-  const onFinish = (values) => {
-    const payload = {
-      appointmentDate: values.date.toISOString(),
-      status: 'Scheduled',
-      reason: values.reason,
-      patientId: values.patientId,
-    }
-    form.resetFields()
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -93,9 +109,9 @@ const AppointmentsPage = () => {
                 rules={[{ required: true, message: 'Выберите пациента' }]}
               >
                 <Select placeholder="Выберите из списка" size="large">
-                  {data?.map((patient) => (
-                    <Select.Option key={patient._id} value={patient.patient}>
-                      {patient.patient}{' '}
+                  {patientsData.data.map((patient) => (
+                    <Select.Option key={patient._id} value={patient._id}>
+                      {patient.name}
                     </Select.Option>
                   ))}
                 </Select>
@@ -143,11 +159,11 @@ const AppointmentsPage = () => {
           </div>
           <Table
             columns={columns}
-            dataSource={data}
+            dataSource={appointmentsData}
             pagination={{ pageSize: 10 }}
             className="custom-table"
             scroll={{ x: 'max-content' }}
-            rowKey={data.doctor}
+            rowKey={appointmentsData.doctor}
           />
         </div>
       </div>

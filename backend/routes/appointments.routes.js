@@ -5,6 +5,7 @@ import {
   create,
   getMyAppointments,
 } from '../controllers/appointment.controller.js'
+import * as patientsController from '../controllers/patients.controller.js'
 import {
   authMiddleware,
   checkRoleMiddleware,
@@ -22,10 +23,15 @@ router.post(
   create
 )
 router.get(
-  '/me',
+  '/',
   authMiddleware,
   checkRoleMiddleware([ROLES.DOCTOR]),
   getMyAppointments
+)
+router.delete(
+  '/:appointmentId',
+  authMiddleware,
+  patientsController.deletePatient
 )
 
 export default router

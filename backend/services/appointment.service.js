@@ -5,5 +5,16 @@ export const createAppointment = async (appointmentData) => {
 }
 
 export const getAppointmentsById = async (doctorId) => {
-  return Appointment.find({ doctor: doctorId })
+  return Appointment.find({ doctor: doctorId }).populate('patient', 'name')
+}
+
+export const deleteAppointmentService = async (patientId, userId) => {
+  const appointment = await Appointment.findOneAndDelete({
+    _id: patientId,
+    user: userId,
+  })
+  if (!appointment) {
+    throw new Error('Appointment not found')
+  }
+  return appointment
 }

@@ -1,5 +1,6 @@
 import {
   createAppointment,
+  deleteAppointmentService,
   getAppointmentsById,
 } from '../services/appointment.service.js'
 
@@ -29,5 +30,18 @@ export const getMyAppointments = async (req, res) => {
       message: 'Error getting list of records',
       error: error.message,
     })
+  }
+}
+
+export const deleteAppointment = async (req, res) => {
+  const userId = req.user.id
+  const appointmentId = req.params.appointmentId
+  try {
+    const deletedPatient = await deleteAppointmentService(appointmentId, userId)
+    res.json(deletedPatient)
+  } catch {
+    return res
+      .status(404)
+      .json({ message: `No appointment with id ${appointmentId}` })
   }
 }
