@@ -20,18 +20,26 @@ export const appointmentsApi = createApi({
       query: () => '/appointments',
       providesTags: ['Appointments'],
     }),
-    deleteAppointmentPatient: build.mutation({
-      query: (id) => ({ url: `/appointments/${id}`, method: 'DELETE' }),
-      invalidatesTags: ['Patients'],
+    deleteAppointment: build.mutation({
+      query: (id) => {
+        console.log(id, 'id')
+        return {
+          url: `/appointments/${id}`,
+          method: 'DELETE',
+        }
+      },
+      invalidatesTags: ['Appointments'],
     }),
-    // updatePatient: build.mutation({
-    //   query: (data) => ({
-    //     url: `/patients/${data._id}`,
-    //     method: 'PATCH',
-    //     body: data,
-    //   }),
-    //   invalidatesTags: ['Patients'],
-    // }),
+    updateAppointment: build.mutation({
+      query: (data) => {
+        return {
+          url: `/appointments/${data._id}`,
+          method: 'PATCH',
+          body: data,
+        }
+      },
+      invalidatesTags: ['Appointments'],
+    }),
     createAppointment: build.mutation({
       query: (data) => ({
         url: '/appointments',
@@ -43,5 +51,9 @@ export const appointmentsApi = createApi({
   }),
 })
 
-export const { useGetAppointmentsQuery, useCreateAppointmentMutation } =
-  appointmentsApi
+export const {
+  useGetAppointmentsQuery,
+  useCreateAppointmentMutation,
+  useDeleteAppointmentMutation,
+  useUpdateAppointmentMutation,
+} = appointmentsApi

@@ -1,9 +1,11 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router'
 
 import {
   ArrowRightOutlined,
   CalendarOutlined,
+  TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons'
 import { Card, Col, Row, Typography } from 'antd'

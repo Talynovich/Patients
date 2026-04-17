@@ -3,9 +3,10 @@ import { Router } from 'express'
 import { ROLES } from '../constants/common.js'
 import {
   create,
+  deleteAppointment,
   getMyAppointments,
+  updateAppointment,
 } from '../controllers/appointment.controller.js'
-import * as patientsController from '../controllers/patients.controller.js'
 import {
   authMiddleware,
   checkRoleMiddleware,
@@ -31,7 +32,14 @@ router.get(
 router.delete(
   '/:appointmentId',
   authMiddleware,
-  patientsController.deletePatient
+  checkRoleMiddleware([ROLES.DOCTOR]),
+  deleteAppointment
+)
+router.patch(
+  '/:appointmentId',
+  authMiddleware,
+  checkRoleMiddleware([ROLES.DOCTOR]),
+  updateAppointment
 )
 
 export default router

@@ -11,10 +11,17 @@ export const getAppointmentsById = async (doctorId) => {
 export const deleteAppointmentService = async (patientId, userId) => {
   const appointment = await Appointment.findOneAndDelete({
     _id: patientId,
-    user: userId,
+    doctor: userId,
   })
   if (!appointment) {
     throw new Error('Appointment not found')
   }
   return appointment
+}
+
+export const updateAppointmentService = async (id, updates) => {
+  return Appointment.findByIdAndUpdate(id, updates, {
+    new: true,
+    runValidators: true,
+  })
 }

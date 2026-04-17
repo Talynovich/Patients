@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import {
   Button,
@@ -6,16 +6,21 @@ import {
   DatePicker,
   Form,
   Input,
+  Popconfirm,
   Select,
   Space,
   Table,
   Typography,
+  message,
 } from 'antd'
 import dayjs from 'dayjs'
 
+import { appointmentSchema } from '../../shared/lib/validation/appointment.scheema.js'
 import {
   useCreateAppointmentMutation,
+  useDeleteAppointmentMutation,
   useGetAppointmentsQuery,
+  useUpdateAppointmentMutation,
 } from '../../store/appointments/appointmentsApi.js'
 import { useGetPatientsQuery } from '../../store/patients/patientsApi.js'
 
@@ -24,30 +29,64 @@ const { Title } = Typography
 const AppointmentsPage = () => {
   const { data: appointmentsData = [], isLoading } = useGetAppointmentsQuery()
   const [createAppointment] = useCreateAppointmentMutation()
-
+  const [deleteAppointment] = useDeleteAppointmentMutation()
+  const [updateAppointment] = useUpdateAppointmentMutation()
+  const [editingId, setEditingId] = useState(null)
   const {
     data: patientsData = { data: [], total: 0 },
     isLoading: isPatientsLoading,
   } = useGetPatientsQuery()
+
   const [form] = Form.useForm()
+
+  const yupSync = {
+    async validator({ field }, value) {
+      await appointmentSchema.validateAt(field, { [field]: value })
+    },
+  }
 
   const onFinish = async (values) => {
     const payload = {
-      appointmentDate: values.date.toISOString(),
+      appointmentDate: values.appointmentDate.toISOString(),
       reason: values.reason,
       patient: values.patient,
     }
+
     try {
-      await createAppointment(payload)
+      if (editingId) {
+        await updateAppointment({
+          _id: editingId._id,
+          ...payload,
+        })
+        message.success('Запись успешно обновлена')
+      } else {
+        await createAppointment(payload)
+        message.success('Запись успешно создана')
+      }
+
       form.resetFields()
+      setEditingId(null)
     } catch (error) {
-      console.log(`Error: ${error}`)
+      console.error(`Ошибка при сохранении: ${error}`)
+      message.error('Произошла ошибка при сохранении данных')
     }
   }
   const onDelete = async (data) => {
     await deleteAppointment(data)
   }
 
+  const onUpdate = async (data) => {
+    try {
+      setEditingId(data)
+      form.setFieldsValue({
+        patient: data.patient._id,
+        appointmentDate: dayjs(data.appointmentDate),
+        reason: data.reason,
+      })
+    } catch (error) {
+      console.log(`Error update appointment: ${error}`)
+    }
+  }
   const columns = [
     {
       title: 'Пациент',
@@ -75,12 +114,24 @@ const AppointmentsPage = () => {
       align: 'right',
       render: (_, record) => (
         <Space size="middle">
-          <Button type="link" size="small">
-            Редактировать
-          </Button>
-          <Button type="link" danger size="small" onClick={onDelete}>
-            Отменить
-          </Button>
+          {!editingId && (
+            <>
+              <Button type="link" size="small" onClick={() => onUpdate(record)}>
+                Редактировать
+              </Button>
+              <Popconfirm
+                title="Удалить запись"
+                description="Вы уверены, что хотите удалить эту запись?"
+                okText="Да"
+                cancelText="Нет"
+                onConfirm={() => onDelete(record._id)}
+              >
+                <Button danger size="small" type="link">
+                  Отменить
+                </Button>
+              </Popconfirm>
+            </>
+          )}
         </Space>
       ),
     },
@@ -103,14 +154,10 @@ const AppointmentsPage = () => {
             initialValues={{ status: 'Scheduled' }}
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Form.Item
-                name="patient"
-                label="Пациент"
-                rules={[{ required: true, message: 'Выберите пациента' }]}
-              >
+              <Form.Item name="patient" label="Пациент" rules={[yupSync]}>
                 <Select placeholder="Выберите из списка" size="large">
                   {patientsData.data.map((patient) => (
-                    <Select.Option key={patient._id} value={patient._id}>
+                    <Select.Option keyr={patient._id} value={patient._id}>
                       {patient.name}
                     </Select.Option>
                   ))}
@@ -118,9 +165,9 @@ const AppointmentsPage = () => {
               </Form.Item>
 
               <Form.Item
-                name="date"
+                name="appointmentDate"
                 label="Дата и время"
-                rules={[{ required: true, message: 'Выберите время' }]}
+                rules={[yupSync]}
               >
                 <DatePicker
                   showTime
@@ -134,21 +181,42 @@ const AppointmentsPage = () => {
               <Form.Item
                 name="reason"
                 label="Причина обращения"
-                rules={[{ required: true, message: 'Укажите причину' }]}
+                rules={[yupSync]}
               >
                 <Input placeholder="Напр: Первичный осмотр" size="large" />
               </Form.Item>
             </div>
 
             <div className="flex justify-end mt-2">
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                className="bg-blue-500"
-              >
-                Записать пациента
-              </Button>
+              {editingId ? (
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="bg-green-500 hover:bg-green-600"
+                >
+                  Сохранить изменения
+                </Button>
+              ) : (
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="bg-blue-500"
+                >
+                  Записать пациента
+                </Button>
+              )}
+
+              {editingId && (
+                <Button
+                  onClick={() => {
+                    setEditingId(null)
+                    form.resetFields()
+                  }}
+                  style={{ marginLeft: 8 }}
+                >
+                  Отмена
+                </Button>
+              )}
             </div>
           </Form>
         </Card>
@@ -163,7 +231,7 @@ const AppointmentsPage = () => {
             pagination={{ pageSize: 10 }}
             className="custom-table"
             scroll={{ x: 'max-content' }}
-            rowKey={appointmentsData.doctor}
+            rowKey="_id"
           />
         </div>
       </div>
