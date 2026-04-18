@@ -1,0 +1,137 @@
+import React, { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+
+import {
+  useCreateUserMutation,
+  useUpdateUserMutation,
+} from '../../store/users/usersApi.js'
+
+const ModalForm = ({ isOpen, onClose, editingPatient }) => {
+  const [createUser] = useCreateUserMutation()
+  const [updatePatient] = useUpdateUserMutation()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      fullName: '',
+      email: '',
+      password: '',
+    },
+  })
+
+  useEffect(() => {
+    if (editingPatient) {
+      reset({
+        fullName: editingPatient.fullName || '',
+        email: editingPatient.email || '',
+        password: editingPatient.password || '',
+      })
+    } else {
+      reset({
+        fullName: '',
+        email: '',
+        password: '',
+      })
+    }
+  }, [editingPatient, reset])
+
+  const onSubmit = async (formData) => {
+    try {
+      if (formData.id) {
+        await updatePatient(formData).unwrap()
+      } else {
+        await createUser(formData).unwrap()
+      }
+      reset()
+      onClose()
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  const handleClose = () => {
+    reset()
+    onClose()
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed max-h-full  inset-0 z-50 flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-y-auto">
+        <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+          <h2 className="text-xl font-semibold text-slate-800">Новый доктор</h2>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              ФИО доктора
+            </label>
+            <input
+              type="text"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg
+                 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              placeholder="Иванов Иван Иванович"
+              {...register('fullName')}
+            />
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+            )}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              placeholder="users@med.ru"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg
+                 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              {...register('email')}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Password
+            </label>
+            <input
+              required={true}
+              type="password"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg
+                 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none"
+              {...register('password')}
+            />
+          </div>
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="flex-1 px-4 py-2 border border-slate-300 text-slate-600
+                 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+            >
+              Отмена
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 border border-slate-300 text-slate-600
+                 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+            >
+              Сохранить
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+export default ModalForm

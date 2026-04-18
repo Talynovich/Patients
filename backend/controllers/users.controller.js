@@ -1,4 +1,9 @@
-import { getAllService, setupUserService } from '../services/users.service.js'
+import {
+  deleteUserService,
+  getAllService,
+  setupUserService,
+  updateUserService,
+} from '../services/users.service.js'
 
 export const setupUser = async (req, res) => {
   try {
@@ -17,4 +22,25 @@ export const setupUser = async (req, res) => {
 export const getAllUsers = async (req, res) => {
   const patients = await getAllService()
   res.json(patients)
+}
+
+export const deleteUser = async (req, res) => {
+  const userId = req.params.userId
+  try {
+    const deleteUser = await deleteUserService(userId)
+    res.json(deleteUser)
+  } catch {
+    return res.status(404).json({ message: `No user with id ${userId}` })
+  }
+}
+
+export const updateUser = async (req, res) => {
+  const id = req.params.userId
+  const updateUser = await updateUserService(id)
+
+  if (!updateUser) {
+    return res.status(404).json({ message: `No user with id ${id}` })
+  }
+
+  res.json(updateUser)
 }

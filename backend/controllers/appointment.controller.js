@@ -37,8 +37,6 @@ export const getMyAppointments = async (req, res) => {
 export const deleteAppointment = async (req, res) => {
   const userId = req.user.id
   const appointmentId = req.params.appointmentId
-  console.log(req.params.appointmentId, 'req.params.appointmentId')
-  console.log(req.user.id, 'req.user.id')
   try {
     const deletedAppointment = await deleteAppointmentService(
       appointmentId,

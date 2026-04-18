@@ -1,0 +1,58 @@
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+
+import { baseurl } from '../../constant/constant'
+
+export const usersApi = createApi({
+  reducerPath: 'usersApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${baseurl}`,
+    prepareHeaders: (headers, { getState }) => {
+      const token = getState().auth.accessToken
+      if (token) {
+        headers.set('authorization', `Bearer ${token}`)
+      }
+      return headers
+    },
+  }),
+  tagTypes: ['Users'],
+  endpoints: (build) => ({
+    getUsers: build.query({
+      query: () => '/users/doctors',
+      providesTags: ['Users'],
+    }),
+    deleteUser: build.mutation({
+      query: (id) => {
+        return {
+          url: `/users/doctors/${id}`,
+          method: 'DELETE',
+        }
+      },
+      invalidatesTags: ['Users'],
+    }),
+    updateUser: build.mutation({
+      query: (data) => {
+        return {
+          url: `/users/doctors/${data._id}`,
+          method: 'PATCH',
+          body: data,
+        }
+      },
+      invalidatesTags: ['Users'],
+    }),
+    createUser: build.mutation({
+      query: (data) => ({
+        url: '/users/doctors',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Users'],
+    }),
+  }),
+})
+
+export const {
+  useGetUsersQuery,
+  useCreateUserMutation,
+  useDeleteUserMutation,
+  useUpdateUserMutation,
+} = usersApi

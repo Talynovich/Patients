@@ -7,6 +7,7 @@ import LayoutPage from '../pages/layoutPage'
 import LoginPage from '../pages/loginPage'
 import PatientDetailsPage from '../pages/patientDetailsPage'
 import PatientRegistry from '../pages/patientRegistry'
+import StaffManagementPage from '../pages/staffManagementPage'
 
 const AppRoutes = () => {
   return (
@@ -16,6 +17,7 @@ const AppRoutes = () => {
         <Route path="/patients/:id" element={<PatientDetailsPage />} />
         <Route path="/patients" element={<PatientRegistry />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
+        <Route path="/users/doctors" element={<StaffManagementPage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />
     </Routes>

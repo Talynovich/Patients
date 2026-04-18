@@ -1,4 +1,5 @@
 import { ROLES } from '../constants/common.js'
+import { Appointment } from '../models/appointmentModel.js'
 import { User } from '../models/userModel.js'
 
 export const setupUserService = async (data) => {
@@ -14,5 +15,22 @@ export const setupUserService = async (data) => {
 }
 
 export const getAllService = async () => {
-  return await User.find({ role: ROLES.DOCTOR })
+  return User.find({ role: ROLES.DOCTOR })
+}
+
+export const deleteUserService = async (userId) => {
+  const user = await User.findOneAndDelete({
+    _id: userId,
+  })
+  if (!user) {
+    throw new Error('User not found')
+  }
+  return user
+}
+
+export const updateUserService = async (userId) => {
+  return User.findByIdAndUpdate(userId, {
+    new: true,
+    runValidators: true,
+  })
 }

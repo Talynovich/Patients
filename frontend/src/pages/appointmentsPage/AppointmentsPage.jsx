@@ -38,7 +38,6 @@ const AppointmentsPage = () => {
   } = useGetPatientsQuery()
 
   const [form] = Form.useForm()
-
   const yupSync = {
     async validator({ field }, value) {
       await appointmentSchema.validateAt(field, { [field]: value })
@@ -93,7 +92,7 @@ const AppointmentsPage = () => {
       dataIndex: 'patient',
       key: 'patient',
       render: (patient) => (
-        <span className="text-blue-600 font-medium">{patient.name}</span>
+        <span className="text-blue-600 font-medium">{patient?.name}</span>
       ),
     },
     {

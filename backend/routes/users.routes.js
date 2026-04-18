@@ -1,7 +1,12 @@
 import { Router } from 'express'
 
 import { ROLES } from '../constants/common.js'
-import { getAllUsers, setupUser } from '../controllers/users.controller.js'
+import {
+  deleteUser,
+  getAllUsers,
+  setupUser,
+  updateUser,
+} from '../controllers/users.controller.js'
 import {
   authMiddleware,
   checkRoleMiddleware,
@@ -20,6 +25,18 @@ router.post(
   authMiddleware,
   checkRoleMiddleware([ROLES.ADMIN]),
   setupUser
+)
+router.delete(
+  '/doctors/:userId',
+  authMiddleware,
+  checkRoleMiddleware([ROLES.ADMIN]),
+  deleteUser
+)
+router.patch(
+  '/doctors/:userId',
+  authMiddleware,
+  checkRoleMiddleware([ROLES.ADMIN]),
+  updateUser
 )
 
 export default router

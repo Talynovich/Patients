@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router'
 import {
   ArrowRightOutlined,
   CalendarOutlined,
-  TeamOutlined,
+  SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons'
 import { Card, Col, Row, Typography } from 'antd'
@@ -30,8 +30,24 @@ const HomePage = () => {
       icon: <CalendarOutlined className="text-3xl text-green-500" />,
       path: '/appointments',
       color: 'hover:border-green-400',
+      role: 'Doctor',
+    },
+    {
+      title: 'Управление аккаунтами',
+      description: 'Настройка прав доступа и создание новых учетных записей.',
+      icon: <SettingOutlined className="text-3xl text-purple-500" />,
+      path: '/users/doctors',
+      color: 'hover:border-purple-400',
+      role: 'Admin',
     },
   ]
+
+  const { role } = useSelector((state) => state.auth.user)
+
+  const visibleItems = menuItems.filter((item) => {
+    if (!item.role) return true
+    return item.role === role
+  })
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
@@ -40,7 +56,7 @@ const HomePage = () => {
       </header>
 
       <Row gutter={[24, 24]}>
-        {menuItems.map((item, index) => (
+        {visibleItems.map((item, index) => (
           <Col xs={24} md={12} key={index}>
             <Card
               hoverable
