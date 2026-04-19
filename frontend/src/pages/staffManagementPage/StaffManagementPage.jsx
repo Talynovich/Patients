@@ -8,6 +8,7 @@ import SearchBar from '../../components/PatientsToolbar'
 import {
   useDeleteUserMutation,
   useGetUsersQuery,
+  useUpdateUserMutation,
 } from '../../store/users/usersApi'
 
 const StaffManagementPage = () => {
@@ -17,6 +18,7 @@ const StaffManagementPage = () => {
   const [editingPatient, setEditingPatient] = useState(null)
   const { data, isLoading, error } = useGetUsersQuery()
   const [deleteUser] = useDeleteUserMutation()
+  const [updateUser] = useUpdateUserMutation()
   const filteredUsers = (data || []).filter((p) =>
     p?.fullName?.toLowerCase().includes(searchTerm.toLowerCase())
   )
@@ -29,7 +31,6 @@ const StaffManagementPage = () => {
   const handleCloseModal = () => {
     setEditingPatient(null)
     setIsModalOpen(false)
-    // dispatch(setCurrentPatient(null))
   }
 
   const onDelete = (id) => {

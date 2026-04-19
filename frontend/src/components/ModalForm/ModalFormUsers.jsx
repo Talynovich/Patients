@@ -27,7 +27,7 @@ const ModalForm = ({ isOpen, onClose, editingPatient }) => {
       reset({
         fullName: editingPatient.fullName || '',
         email: editingPatient.email || '',
-        password: editingPatient.password || '',
+        password: '',
       })
     } else {
       reset({
@@ -40,8 +40,15 @@ const ModalForm = ({ isOpen, onClose, editingPatient }) => {
 
   const onSubmit = async (formData) => {
     try {
-      if (formData.id) {
-        await updatePatient(formData).unwrap()
+      if (editingPatient?._id) {
+        const updateData = {
+          id: editingPatient._id,
+          ...formData,
+        }
+        if (!updateData.password) {
+          delete updateData.password
+        }
+        await updatePatient(updateData).unwrap()
       } else {
         await createUser(formData).unwrap()
       }
@@ -80,10 +87,18 @@ const ModalForm = ({ isOpen, onClose, editingPatient }) => {
               className="w-full px-3 py-2 border border-slate-300 rounded-lg
                  focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               placeholder="Иванов Иван Иванович"
-              {...register('fullName')}
+              {...register('fullName', {
+                required: 'ФИО обязательно для заполнения',
+                pattern: {
+                  value: /^[A-Za-z\s]+$/,
+                  message: 'Разрешена только латиница',
+                },
+              })}
             />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+            {errors.fullName && (
+              <span className="text-red-500 text-xs mt-1">
+                {errors.fullName.message}
+              </span>
             )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
@@ -96,20 +111,35 @@ const ModalForm = ({ isOpen, onClose, editingPatient }) => {
               placeholder="users@med.ru"
               className="w-full px-3 py-2 border border-slate-300 rounded-lg
                  focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-              {...register('email')}
+              {...register('email', { required: 'Укажите email' })}
             />
+            {errors.email && (
+              <span className="text-red-500 text-xs mt-1">
+                {errors.email.message}
+              </span>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Password
             </label>
             <input
-              required={true}
               type="password"
               className="w-full px-3 py-2 border border-slate-300 rounded-lg
                  focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none"
-              {...register('password')}
+              {...register('password', {
+                required: 'Пароль обязателен',
+                minLength: {
+                  value: 5,
+                  message: 'Пароль должен содержать минимум 5 символов',
+                },
+              })}
             />
+            {errors.password && (
+              <span className="text-red-500 text-xs mt-1">
+                {errors.password.message}
+              </span>
+            )}
           </div>
           <div className="flex gap-3 pt-4">
             <button

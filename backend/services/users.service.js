@@ -1,5 +1,4 @@
 import { ROLES } from '../constants/common.js'
-import { Appointment } from '../models/appointmentModel.js'
 import { User } from '../models/userModel.js'
 
 export const setupUserService = async (data) => {
@@ -28,8 +27,8 @@ export const deleteUserService = async (userId) => {
   return user
 }
 
-export const updateUserService = async (userId) => {
-  return User.findByIdAndUpdate(userId, {
+export const updateUserService = async (userId, updateData) => {
+  return User.findByIdAndUpdate(userId, updateData, {
     new: true,
     runValidators: true,
   })

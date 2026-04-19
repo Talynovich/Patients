@@ -36,7 +36,7 @@ export const deleteUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   const id = req.params.userId
-  const updateUser = await updateUserService(id)
+  const updateUser = await updateUserService(id, req.body)
 
   if (!updateUser) {
     return res.status(404).json({ message: `No user with id ${id}` })
