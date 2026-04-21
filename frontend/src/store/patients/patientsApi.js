@@ -17,7 +17,7 @@ export const patientsApi = createApi({
   tagTypes: ['Patients'],
   endpoints: (build) => ({
     getPatients: build.query({
-      query: () => '/patients',
+      query: ({ page, limit = 10 }) => `/patients?page=${page}&limit=${limit}`,
       providesTags: ['Patients'],
     }),
     deletePatient: build.mutation({

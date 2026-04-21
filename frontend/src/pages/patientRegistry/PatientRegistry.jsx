@@ -15,10 +15,11 @@ const PatientManagement = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingPatient, setEditingPatient] = useState(null)
+  const [page, setPage] = useState(1)
 
   const dispatch = useDispatch()
 
-  const { data = [], isLoading } = useGetPatientsQuery()
+  const { data = [], isLoading } = useGetPatientsQuery({ page })
   const [deletePatient] = useDeletePatientMutation()
 
   const filteredPatients = (data?.data || []).filter((p) =>
@@ -46,6 +47,10 @@ const PatientManagement = () => {
     onEdit: handleEditingClick,
     holder,
   })
+
+  const handleTableChange = (value) => {
+    setPage(value.current)
+  }
   return (
     <div className="bg-slate-50 p-4 md:p-8 font-sans">
       <div className="max-w-6xl mx-auto">
@@ -65,6 +70,13 @@ const PatientManagement = () => {
             loading={isLoading}
             rowKey="_id"
             scroll={{ x: 'max-content' }}
+            onChange={handleTableChange}
+            pagination={{
+              current: page,
+              pageSize: 10,
+              total: data.total,
+              showSizeChanger: false,
+            }}
           />
         </div>
       </div>

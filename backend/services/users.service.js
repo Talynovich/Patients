@@ -13,8 +13,22 @@ export const setupUserService = async (data) => {
   return user
 }
 
-export const getAllService = async () => {
-  return User.find({ role: ROLES.DOCTOR })
+export const getAllService = async ({ name, page = 1, limit = 20 } = {}) => {
+  const filter = { role: ROLES.DOCTOR }
+  if (name) {
+    filter.name = { $regex: name, $options: 'i' }
+  }
+  const skip = (page - 1) * limit
+
+  const data = await User.find(filter)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(Number(limit))
+  const total = await User.countDocuments(filter)
+  return {
+    data,
+    total,
+  }
 }
 
 export const deleteUserService = async (userId) => {

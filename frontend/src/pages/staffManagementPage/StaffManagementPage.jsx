@@ -16,10 +16,11 @@ const StaffManagementPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [IsModalOpen, setIsModalOpen] = useState(false)
   const [editingPatient, setEditingPatient] = useState(null)
-  const { data, isLoading, error } = useGetUsersQuery()
+  const [page, setPage] = useState(1)
+  const { data, isLoading, error } = useGetUsersQuery({ page })
+  console.log(data.total)
   const [deleteUser] = useDeleteUserMutation()
-  const [updateUser] = useUpdateUserMutation()
-  const filteredUsers = (data || []).filter((p) =>
+  const filteredUsers = (data?.data || []).filter((p) =>
     p?.fullName?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
@@ -36,7 +37,9 @@ const StaffManagementPage = () => {
   const onDelete = (id) => {
     deleteUser(id)
   }
-
+  const handleTableChange = (value) => {
+    setPage(value.current)
+  }
   const columns = [
     {
       title: 'Имя',
@@ -113,6 +116,13 @@ const StaffManagementPage = () => {
             loading={isLoading}
             rowKey="_id"
             scroll={{ x: 'max-content' }}
+            onChange={handleTableChange}
+            pagination={{
+              current: page,
+              pageSize: 10,
+              total: data?.total,
+              showSizeChanger: false,
+            }}
           />
         </div>
       </div>

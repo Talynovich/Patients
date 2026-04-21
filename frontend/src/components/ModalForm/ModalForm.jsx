@@ -81,9 +81,15 @@ const ModalForm = ({ isOpen, onClose, initialDate }) => {
     <div className="fixed max-h-full  inset-0 z-50 flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-y-auto">
         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-slate-800">
-            Новый пациент
-          </h2>
+          {initialDate ? (
+            <h2 className="text-xl font-semibold text-slate-800">
+              Редактировать пациента
+            </h2>
+          ) : (
+            <h2 className="text-xl font-semibold text-slate-800">
+              Новый пациент
+            </h2>
+          )}
           <button
             onClick={handleClose}
             className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
