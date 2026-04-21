@@ -32,10 +32,9 @@ const AppointmentsPage = () => {
   const [deleteAppointment] = useDeleteAppointmentMutation()
   const [updateAppointment] = useUpdateAppointmentMutation()
   const [editingId, setEditingId] = useState(null)
-  const {
-    data: patientsData = { data: [], total: 0 },
-    isLoading: isPatientsLoading,
-  } = useGetPatientsQuery()
+  const [page, setPage] = useState(1)
+  const { data: patientsData = { data: [] }, isLoading: isPatientsLoading } =
+    useGetPatientsQuery()
 
   const [form] = Form.useForm()
   const yupSync = {

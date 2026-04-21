@@ -10,10 +10,12 @@ export const getAllPatients = async (
   if (name) {
     filter.name = { $regex: name, $options: 'i' }
   }
-
-  const skip = (page - 1) * limit
-  const data = await Patients.find(filter).skip(skip).limit(Number(limit))
-
+  let query = Patients.find(filter)
+  if (page && limit) {
+    const skip = (page - 1) * limit
+    query = query.skip(skip).limit(Number(limit))
+  }
+  const data = await query
   const total = await Patients.countDocuments(filter)
   return {
     data,

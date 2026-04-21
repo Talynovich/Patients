@@ -42,8 +42,15 @@ export const deleteUserService = async (userId) => {
 }
 
 export const updateUserService = async (userId, updateData) => {
-  return User.findByIdAndUpdate(userId, updateData, {
-    new: true,
-    runValidators: true,
-  })
+  const user = await User.findById(userId)
+  if (!user) throw new Error('User not found')
+  if (updateData.password) {
+    user.password = updateData.password
+    user.markModified('password')
+  }
+  const { password, ...otherData } = updateData
+  Object.assign(user, otherData)
+
+  await user.save()
+  return user
 }

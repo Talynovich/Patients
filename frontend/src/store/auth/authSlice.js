@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
+import Cookies from 'js-cookie'
 
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    accessToken: localStorage.getItem('accessToken') || null,
-    refreshToken: localStorage.getItem('refreshToken') || null,
-    isAuthenticated: !!localStorage.getItem('accessToken'),
+    accessToken: Cookies.get('accessToken') || null,
+    refreshToken: Cookies.get('refreshToken') || null,
+    isAuthenticated: !!Cookies.get('accessToken'),
     user: JSON.parse(localStorage.getItem('user')) || null,
   },
   reducers: {
@@ -14,8 +15,16 @@ const authSlice = createSlice({
       state.accessToken = action.payload.accessToken
       state.refreshToken = action.payload.refreshToken
       state.isAuthenticated = true
-      localStorage.setItem('accessToken', action.payload.accessToken)
-      localStorage.setItem('refreshToken', action.payload.refreshToken)
+      Cookies.set('accessToken', action.payload.accessToken, {
+        expires: 1,
+        secure: true,
+        sameSite: 'strict',
+      })
+      Cookies.set('refreshToken', action.payload.refreshToken, {
+        expires: 7,
+        secure: true,
+        sameSite: 'strict',
+      })
       localStorage.setItem('user', JSON.stringify(action.payload.user))
     },
     logout: (state) => {
@@ -23,8 +32,8 @@ const authSlice = createSlice({
       state.accessToken = null
       state.refreshToken = null
       state.isAuthenticated = false
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
+      Cookies.remove('accessToken')
+      Cookies.remove('refreshToken')
       localStorage.removeItem('user')
     },
   },

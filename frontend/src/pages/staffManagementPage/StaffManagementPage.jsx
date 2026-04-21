@@ -18,7 +18,6 @@ const StaffManagementPage = () => {
   const [editingPatient, setEditingPatient] = useState(null)
   const [page, setPage] = useState(1)
   const { data, isLoading, error } = useGetUsersQuery({ page })
-  console.log(data.total)
   const [deleteUser] = useDeleteUserMutation()
   const filteredUsers = (data?.data || []).filter((p) =>
     p?.fullName?.toLowerCase().includes(searchTerm.toLowerCase())
