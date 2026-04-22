@@ -49,27 +49,26 @@ export const login = async (email, password) => {
 
 export const refresh = async (token) => {
   try {
-    const payload = await jwt.verify(token, process.env.JWT_SECRET)
+    const payload = jwt.verify(token, process.env.JWT_SECRET)
+
     const accessToken = jwt.sign(
       { id: payload.id, role: payload.role },
       process.env.JWT_SECRET,
-      {
-        expiresIn: '15m',
-      }
+      { expiresIn: '15m' }
     )
+
     const refreshToken = jwt.sign(
       { id: payload.id, role: payload.role },
       process.env.JWT_SECRET,
-      {
-        expiresIn: '3d',
-      }
+      { expiresIn: '3d' }
     )
+
     return {
       accessToken,
       refreshToken,
-      user: { id: payload.id, email: payload.email, role: payload.role },
+      user: { id: payload.id, role: payload.role },
     }
-  } catch {
+  } catch (e) {
     throw new Error('Refresh token error')
   }
 }

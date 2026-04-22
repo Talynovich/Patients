@@ -5,6 +5,7 @@ import { logout, setCredentials } from './authSlice'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${baseurl}`,
+  credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.accessToken
     if (token) {
@@ -16,6 +17,7 @@ const baseQuery = fetchBaseQuery({
     }
     return headers
   },
+  tagTypes: ['Auth'],
 })
 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
@@ -27,7 +29,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       {
         url: 'auth/refresh',
         method: 'POST',
-        body: { refreshToken },
       },
       api,
       extraOptions
@@ -53,11 +54,13 @@ export const authApi = createApi({
         method: 'POST',
         body: credential,
       }),
+      providesTags: ['Auth'],
     }),
     getUser: build.query({
       query: () => ({
         url: '/appointments',
       }),
+      providesTags: ['Auth'],
     }),
   }),
 })

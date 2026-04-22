@@ -13,8 +13,15 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body
-    const user = await authService.login(email, password)
-    res.json(user)
+    const { accessToken, refreshToken, user } = await authService.login(
+      email,
+      password
+    )
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: 3 * 24 * 60 * 60 * 1000,
+    })
+    res.json({ accessToken, user })
   } catch (error) {
     res.status(400).json({ message: error.message })
   }
@@ -22,11 +29,21 @@ export const login = async (req, res) => {
 
 export const refresh = async (req, res) => {
   try {
-    const { refreshToken } = req.body
-    const tokens = await authService.refresh(refreshToken)
-    res.json(tokens)
+    const refreshTokenFromCookie = req.cookies.refreshToken
+    if (!refreshTokenFromCookie) {
+      return res.status(401).json({ message: 'Refresh token missing' })
+    }
+    const { accessToken, refreshToken, user } = await authService.refresh(
+      refreshTokenFromCookie
+    )
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: 3 * 24 * 60 * 60 * 1000,
+    })
+
+    res.json({ accessToken, user })
   } catch (error) {
-    res.status(400).json('Refresh token error')
+    res.status(401).json({ message: 'Invalid or expired refresh token' })
   }
 }
 
