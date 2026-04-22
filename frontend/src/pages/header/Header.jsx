@@ -4,14 +4,21 @@ import { Link, useNavigate } from 'react-router'
 
 import { Button } from 'antd'
 
+import { useLogoutApiMutation } from '../../store/auth/authApi.js'
 import { logout } from '../../store/auth/authSlice.js'
 
 const Header = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const handleLogout = () => {
-    dispatch(logout())
-    navigate('/login')
+  const [logoutApi] = useLogoutApiMutation()
+  const handleLogout = async () => {
+    try {
+      await logoutApi().unwrap()
+      dispatch(logout())
+      navigate('/login')
+    } catch (err) {
+      console.log(err)
+    }
   }
   return (
     <header className="bg-white border-b border-gray-100">

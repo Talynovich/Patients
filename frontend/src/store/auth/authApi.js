@@ -24,7 +24,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions)
 
   if (result.error && result.error.status === 401) {
-    const refreshToken = api.getState().auth.refreshToken
     const refreshResult = await baseQuery(
       {
         url: 'auth/refresh',
@@ -58,11 +57,19 @@ export const authApi = createApi({
     }),
     getUser: build.query({
       query: () => ({
-        url: '/appointments',
+        url: '/auth/me',
+      }),
+      providesTags: ['Auth'],
+    }),
+    logoutApi: build.mutation({
+      query: () => ({
+        url: '/auth/logout',
+        method: 'POST',
       }),
       providesTags: ['Auth'],
     }),
   }),
 })
 
-export const { useLoginMutation, useGetUserQuery } = authApi
+export const { useLoginMutation, useGetUserQuery, useLogoutApiMutation } =
+  authApi

@@ -47,6 +47,24 @@ export const login = async (email, password) => {
   }
 }
 
+export const me = async (email, password) => {
+  const user = await User.findOne({ email })
+  if (!user) {
+    throw new Error(
+      'User not found. Please verify your email address is correct.'
+    )
+  }
+  const isPasswordValid = await bcrypt.compare(password, user?.password)
+  if (!isPasswordValid) {
+    throw new Error(
+      'The password is incorrect. Please check that it is correct.'
+    )
+  }
+  return {
+    user: { id: user.id, email: user.email, role: user.role },
+  }
+}
+
 export const refresh = async (token) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET)
