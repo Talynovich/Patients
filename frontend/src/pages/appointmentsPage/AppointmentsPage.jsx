@@ -22,6 +22,7 @@ import {
   useGetAppointmentsQuery,
   useUpdateAppointmentMutation,
 } from '../../store/appointments/appointmentsApi.js'
+import { useGetUserQuery } from '../../store/auth/authApi.js'
 import { useGetPatientsQuery } from '../../store/patients/patientsApi.js'
 
 const { Title } = Typography
@@ -31,6 +32,7 @@ const AppointmentsPage = () => {
   const [createAppointment] = useCreateAppointmentMutation()
   const [deleteAppointment] = useDeleteAppointmentMutation()
   const [updateAppointment] = useUpdateAppointmentMutation()
+  const { isLoading: isLoadingMe } = useGetUserQuery()
   const [editingId, setEditingId] = useState(null)
   const [page, setPage] = useState(1)
   const { data: patientsData = { data: [] }, isLoading: isPatientsLoading } =

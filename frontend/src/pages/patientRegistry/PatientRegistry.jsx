@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { Table, message } from 'antd'
+import { useDebounce } from 'use-debounce'
 
 import PatientsToolbar from '../../components/PatientsToolbar/PatientsToolbar'
+import { useGetUserQuery } from '../../store/auth/authApi.js'
 import {
   useDeletePatientMutation,
   useGetPatientsQuery,
@@ -12,19 +14,21 @@ import { setCurrentPatient } from '../../store/patients/patientsSlice'
 import { usePatientColumns } from './usePatientColumns'
 
 const PatientManagement = () => {
+  const { isLoading: isLoadingMe } = useGetUserQuery()
   const [searchTerm, setSearchTerm] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingPatient, setEditingPatient] = useState(null)
   const [page, setPage] = useState(1)
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 400)
 
   const dispatch = useDispatch()
 
-  const { data = [], isLoading } = useGetPatientsQuery({ page })
+  const { data = [], isLoading } = useGetPatientsQuery({
+    page,
+    name: debouncedSearchTerm,
+  })
   const [deletePatient] = useDeletePatientMutation()
 
-  const filteredPatients = (data?.data || []).filter((p) =>
-    p?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  )
   const handleEditingClick = (patient) => {
     setIsModalOpen(true)
     setEditingPatient(patient)
@@ -55,7 +59,7 @@ const PatientManagement = () => {
     <div className="bg-slate-50 p-4 md:p-8 font-sans">
       <div className="max-w-6xl mx-auto">
         <PatientsToolbar
-          filteredPatients={filteredPatients}
+          data={data?.data}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           isModalOpen={isModalOpen}
@@ -66,7 +70,7 @@ const PatientManagement = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           <Table
             columns={columns}
-            dataSource={filteredPatients}
+            dataSource={data?.data}
             loading={isLoading}
             rowKey="_id"
             scroll={{ x: 'max-content' }}

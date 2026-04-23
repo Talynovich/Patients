@@ -17,8 +17,16 @@ export const usersApi = createApi({
   tagTypes: ['Users'],
   endpoints: (build) => ({
     getUsers: build.query({
-      query: ({ page, limit = 10 }) =>
-        `/users/doctors?page=${page}&limit=${limit}`,
+      query: ({ page, limit = 10, name }) => {
+        const params = new URLSearchParams()
+
+        if (page) params.append('page', page)
+        if (limit) params.append('limit', limit)
+        if (name) params.append('name', name)
+
+        const queryString = params.toString()
+        return queryString ? `users/doctors?${queryString}` : 'users/doctors'
+      },
       providesTags: ['Users'],
     }),
     deleteUser: build.mutation({

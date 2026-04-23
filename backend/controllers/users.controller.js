@@ -20,8 +20,12 @@ export const setupUser = async (req, res) => {
 }
 
 export const getAllUsers = async (req, res) => {
-  const { page, limit } = req.query
-  const patients = await getAllService({ page: +page, limit: +limit })
+  const { page, limit, name } = req.query
+  const patients = await getAllService({
+    page: +page,
+    limit: +limit,
+    name: name,
+  })
   res.json(patients)
 }
 

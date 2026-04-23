@@ -17,11 +17,15 @@ export const patientsApi = createApi({
   tagTypes: ['Patients'],
   endpoints: (build) => ({
     getPatients: build.query({
-      query: ({ page, limit = 10 } = {}) => {
-        if (page && limit) {
-          return `/patients?page=${page}&limit=${limit}`
-        }
-        return '/patients'
+      query: ({ page, limit = 10, name } = {}) => {
+        const params = new URLSearchParams()
+
+        if (page) params.append('page', page)
+        if (limit) params.append('limit', limit)
+        if (name) params.append('name', name)
+
+        const queryString = params.toString()
+        return queryString ? `/patients?${queryString}` : '/patients'
       },
       providesTags: ['Patients'],
     }),

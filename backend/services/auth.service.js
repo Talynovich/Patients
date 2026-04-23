@@ -26,14 +26,14 @@ export const login = async (email, password) => {
     )
   }
   const accessToken = jwt.sign(
-    { id: user._id, role: user.role },
+    { id: user._id, role: user.role, fullName: user.fullName },
     process.env.JWT_SECRET,
     {
       expiresIn: '15m',
     }
   )
   const refreshToken = jwt.sign(
-    { id: user._id, role: user.role },
+    { id: user._id, role: user.role, fullName: user.fullName },
     process.env.JWT_SECRET,
     {
       expiresIn: '3d',
@@ -47,36 +47,18 @@ export const login = async (email, password) => {
   }
 }
 
-export const me = async (email, password) => {
-  const user = await User.findOne({ email })
-  if (!user) {
-    throw new Error(
-      'User not found. Please verify your email address is correct.'
-    )
-  }
-  const isPasswordValid = await bcrypt.compare(password, user?.password)
-  if (!isPasswordValid) {
-    throw new Error(
-      'The password is incorrect. Please check that it is correct.'
-    )
-  }
-  return {
-    user: { id: user.id, email: user.email, role: user.role },
-  }
-}
-
 export const refresh = async (token) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET)
 
     const accessToken = jwt.sign(
-      { id: payload.id, role: payload.role },
+      { id: payload.id, role: payload.role, fullName: payload.fullName },
       process.env.JWT_SECRET,
       { expiresIn: '15m' }
     )
 
     const refreshToken = jwt.sign(
-      { id: payload.id, role: payload.role },
+      { id: payload.id, role: payload.role, fullName: payload.fullName },
       process.env.JWT_SECRET,
       { expiresIn: '3d' }
     )

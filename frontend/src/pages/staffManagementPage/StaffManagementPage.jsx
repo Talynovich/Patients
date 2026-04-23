@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 
 import { Button, Popconfirm, Space, Table, notification } from 'antd'
 import { Plus } from 'lucide-react'
+import { useDebounce } from 'use-debounce'
 
 import ModalFormUsers from '../../components/ModalForm/ModalFormUsers.jsx'
 import SearchBar from '../../components/PatientsToolbar'
 import {
   useDeleteUserMutation,
   useGetUsersQuery,
-  useUpdateUserMutation,
 } from '../../store/users/usersApi'
 
 const StaffManagementPage = () => {
@@ -17,11 +17,12 @@ const StaffManagementPage = () => {
   const [IsModalOpen, setIsModalOpen] = useState(false)
   const [editingPatient, setEditingPatient] = useState(null)
   const [page, setPage] = useState(1)
-  const { data, isLoading, error } = useGetUsersQuery({ page })
+  const [debounceSearchTerm] = useDebounce(searchTerm, 400)
+  const { data, isLoading, error } = useGetUsersQuery({
+    page,
+    name: debounceSearchTerm,
+  })
   const [deleteUser] = useDeleteUserMutation()
-  const filteredUsers = (data?.data || []).filter((p) =>
-    p?.fullName?.toLowerCase().includes(searchTerm.toLowerCase())
-  )
 
   const handleEditingClick = (patient) => {
     setIsModalOpen(true)
@@ -45,7 +46,9 @@ const StaffManagementPage = () => {
       dataIndex: 'fullName',
       key: 'fullName',
       render: (text, record) => (
-        <a onClick={() => navigate(`/admin/users/${record._id}`)}>{text}</a>
+        <a onClick={() => navigate(`/admin/users/${record.data._id}`)}>
+          {text}
+        </a>
       ),
     },
     {
@@ -88,7 +91,7 @@ const StaffManagementPage = () => {
             <h1 className="text-2xl font-bold text-slate-800">
               Реестр учётных записей
             </h1>
-            <p className="text-slate-500">Всего записей: {data?.length}</p>
+            <p className="text-slate-500">Всего записей: {data?.data.length}</p>
           </div>
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <Button
@@ -111,7 +114,7 @@ const StaffManagementPage = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           <Table
             columns={columns}
-            dataSource={filteredUsers}
+            dataSource={data?.data}
             loading={isLoading}
             rowKey="_id"
             scroll={{ x: 'max-content' }}

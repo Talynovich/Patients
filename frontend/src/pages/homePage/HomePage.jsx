@@ -10,9 +10,12 @@ import {
 } from '@ant-design/icons'
 import { Card, Col, Row, Typography } from 'antd'
 
+import { useGetUserQuery } from '../../store/auth/authApi'
+
 const { Title, Text } = Typography
 
 const HomePage = () => {
+  const { isLoading } = useGetUserQuery()
   const navigate = useNavigate()
 
   const menuItems = [
@@ -49,6 +52,7 @@ const HomePage = () => {
     return item.role === role
   })
 
+  if (isLoading) return null
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <header className="mb-10 text-center">

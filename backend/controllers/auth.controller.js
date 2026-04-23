@@ -63,10 +63,9 @@ export const logout = async (req, res) => {
 }
 
 export const me = async (req, res) => {
+  const { id, role } = req.user
   try {
-    const { email, password } = req.body
-    const { user } = await authService.me(email, password)
-    res.json({ user })
+    await res.status(200).json(req.user)
   } catch (error) {
     res.status(400).json({ message: error.message })
   }

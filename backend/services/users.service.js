@@ -16,7 +16,7 @@ export const setupUserService = async (data) => {
 export const getAllService = async ({ name, page = 1, limit = 20 } = {}) => {
   const filter = { role: ROLES.DOCTOR }
   if (name) {
-    filter.name = { $regex: name, $options: 'i' }
+    filter.fullName = { $regex: name, $options: 'i' }
   }
   const skip = (page - 1) * limit
 

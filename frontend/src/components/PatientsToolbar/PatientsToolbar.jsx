@@ -7,7 +7,7 @@ import ModalForm from '../ModalForm/index.js'
 import SearchBar from './SearchBar'
 
 const PatientsToolbar = ({
-  filteredPatients,
+  data,
   searchTerm,
   setSearchTerm,
   isModalOpen,
@@ -19,9 +19,7 @@ const PatientsToolbar = ({
     <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
         <h1 className="text-2xl font-bold text-slate-800">Реестр пациентов</h1>
-        <p className="text-slate-500">
-          Всего записей: {filteredPatients?.length}
-        </p>
+        <p className="text-slate-500">Всего записей: {data?.length}</p>
       </div>
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <Button
