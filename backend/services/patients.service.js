@@ -1,4 +1,5 @@
 import { ROLES } from '../constants/common.js'
+import { Appointment } from '../models/appointmentModel.js'
 import { Patients } from '../models/patientsModel.js'
 
 export const getAllPatients = async (
@@ -47,5 +48,8 @@ export const deletePatient = async (patientId, userId) => {
   if (!patient) {
     throw new Error('Patient not found')
   }
+  await Appointment.deleteMany({
+    patient: patientId,
+  })
   return patient
 }
